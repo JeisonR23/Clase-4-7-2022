@@ -1,0 +1,223 @@
+@page "/Compra"
+@page "/R_Compras/{CompraId:int}"
+@inject ComprasBLL comprasBLL
+@inject ProductosBLL productosBLL
+
+<EditForm Model="compra" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card text-dark bg-light mb-3 shadow-lg">
+
+        <div class="card-header">Registro de Compras</div>
+
+        <div class="card-body">
+            <div class="row justify-content-between">
+
+                @*Compra Id*@
+                <div class="col-3">
+                    <label>Compra Id</label>
+                    <div class="input-group mb-3">
+                        <InputNumber class="form-control" @bind-Value="compra.CompraId" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button"> <i
+                                class="oi oi-magnifying-glass" /> </button>
+                    </div>
+                </div>
+
+
+
+                @*Fecha*@
+                <div class="col-3">
+                    <label>Fecha</label>
+                    <InputDate class="form-control" @bind-Value="compra.Fecha" />
+                </div>
+            </div>
+
+
+
+
+            @* COMPRA DETALLE *@
+            <fieldset class="border-success">
+
+                <div class="row">
+                    @*Productos*@
+                    <div class="col-2">
+                        <label>Producto</label>
+                        <InputSelect class="form-select" @bind-Value="Detalle.ProductoId">
+                            <option value="0" disabled> Seleccione </option>
+                            @foreach (var producto in ProductList)
+                            {
+                                <option value="@producto.ProductoId"> @producto.Descripcion</option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    @* Descripcion *@
+                    <div class="col">
+                        <label>Descripción</label>
+                        <InputText class="form-control" @bind-Value="Detalle.Descripcion"></InputText>
+                    </div>
+
+                    @* Costo *@
+                    <div class="col">
+                        <label>Costo</label>
+                        <InputNumber class="form-control" @bind-Value="Detalle.Costo"></InputNumber>
+
+                    </div>
+
+
+                    @* Cantidad *@
+                    <div class="col">
+                        <label>Cantidad</label>
+                        <InputNumber class="form-control" @bind-Value="Detalle.Precio" />
+
+                    </div>
+
+
+                    @* Boton agregar *@
+                    <div class="col">
+                        <button type="button" class="btn btn-primary  mt-4" @onclick="AgregarDetalle">
+                            <span class="oi oi-plus">Agregar</span>
+                        </button>
+
+                    </div>
+
+                </div>
+            </fieldset>
+
+
+            @* Tabla de detalles *@
+            <hr />
+            <table class="table table-bordered table-light">
+                <thead class="thead">
+                    <tr class="table">
+                        <th>ProductoId</th>
+                        <th>Descripción</th>
+                        <th>Costo</th>
+                        <th>Precio</th>
+                        <th>Existencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in compra.Detalle)
+                    {
+                        <tr>
+                            <td>@item.ProductoId</td>
+                            <td>@item.Descripcion </td>
+                            <td>@item.Costo</td>
+                            <td>@item.Precio</td>
+                            <td>RD$@item.Existencia</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <hr />
+
+
+            @*Total*@
+            <div class="row  d-flex justify-content-end">
+                <div class="col-3">
+                    <label>Total</label>
+                    <span class="form-control"> @compra.Total.ToString("N2") </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex justify-content-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file"> Nuevo
+                    </i></button>
+                <button type="submit" class="btn btn-success"> <i class="oi oi-document"> Guardar </i></button>
+                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"> Eliminar
+                    </i></button>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int CompraId { get; set; }
+    public Compras compra { get; set; } = new Compras();
+    public List<Productos> ProductList { get; set; }
+    public ComprasDetalles Detalle { get; set; } = new ComprasDetalles();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        ProductList = productosBLL.GetList();
+        compra.CompraId = 0;
+        compra.SuplidorId = "Jeison Reyes";
+        compra.Fecha = DateTime.Now;
+        compra.Total = 0;
+        compra.CompraId = CompraId;
+        Buscar();
+    }
+
+    public void AgregarDetalle()
+    {
+        var producto = productosBLL.Buscar(Detalle.ProductoId);
+        if (producto != null)
+        {
+
+            Detalle.Descripcion = producto.Descripcion;
+
+            Detalle.Costo = producto.Costo;
+
+            compra.Detalle.Add(Detalle);
+
+        }
+
+    }
+
+    public void Nuevo()
+    {
+        compra = new Compras();
+
+    }
+    void Buscar()
+    {
+        if (this.compra.CompraId > 0)
+        {
+            Compras encontrado = comprasBLL.BuscarP(this.compra.CompraId);
+            if (encontrado != null)
+            {
+                this.compra = encontrado;
+            }
+
+        }
+    }
+
+    void Guardar()
+    {
+        this.compra.Ncf = "";
+        var guardado = comprasBLL.Guardar(this.compra);
+
+        Console.WriteLine("No se Guardo");
+
+
+    }
+
+    public void Eliminar()
+    {
+        bool eliminado;
+        if (compra.Total != 0)
+        {
+            eliminado = comprasBLL.Eliminar(compra.CompraId);
+            if (eliminado)
+            {
+                Nuevo();
+
+            }
+            else
+            {
+                Console.WriteLine("No se elimino la compra");
+            }
+        }
+    }
+
+
+}
