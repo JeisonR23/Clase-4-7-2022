@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroDetalles.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220703201241_inicial")]
-    partial class inicial
+    [Migration("20220713200412_Inicial")]
+    partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,6 +58,9 @@ namespace RegistroDetalles.Migrations
                     b.Property<double>("Costo")
                         .HasColumnType("REAL");
 
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("ProductoId")
                         .HasColumnType("INTEGER");
 
@@ -89,6 +92,32 @@ namespace RegistroDetalles.Migrations
                     b.HasKey("ProductoId");
 
                     b.ToTable("Productos");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductoId = 1,
+                            Costo = 3.0,
+                            Descripcion = "Huevos",
+                            Existencia = 0.0,
+                            Precio = 7.0
+                        },
+                        new
+                        {
+                            ProductoId = 2,
+                            Costo = 50.0,
+                            Descripcion = "Cebollas",
+                            Existencia = 0.0,
+                            Precio = 85.0
+                        },
+                        new
+                        {
+                            ProductoId = 3,
+                            Costo = 30.0,
+                            Descripcion = "Lechuga",
+                            Existencia = 0.0,
+                            Precio = 50.0
+                        });
                 });
 
             modelBuilder.Entity("Suplidores", b =>

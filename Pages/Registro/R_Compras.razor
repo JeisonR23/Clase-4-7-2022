@@ -22,7 +22,22 @@
                                 class="oi oi-magnifying-glass" /> </button>
                     </div>
                 </div>
+                @*Compra NCF*@
+                <div class="col-3">
+                    <label>NCF</label>
+                    <div class="input-group mb-3">
+                        <InputText class="form-control" @bind-Value="compra.Ncf" placeholder="Ingrece el NCF" />
+                    </div>
+                </div>
 
+                @*Compra Suplidor*@
+                <div class="col-3">
+                    <label>Suplidor</label>
+                    <div class="input-group mb-3">
+                        <InputText class="form-control" @bind-Value="compra.SuplidorId"
+                            placeholder="Ingrese el nombre del suplidor" />
+                    </div>
+                </div>
 
 
                 @*Fecha*@
@@ -40,7 +55,7 @@
 
                 <div class="row">
                     @*Productos*@
-                    <div class="col-2">
+                    <div class="col-6">
                         <label>Producto</label>
                         <InputSelect class="form-select" @bind-Value="Detalle.ProductoId">
                             <option value="0" disabled> Seleccione </option>
@@ -51,24 +66,11 @@
                         </InputSelect>
                     </div>
 
-                    @* Descripcion *@
-                    <div class="col">
-                        <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="Detalle.Descripcion"></InputText>
-                    </div>
-
-                    @* Costo *@
-                    <div class="col">
-                        <label>Costo</label>
-                        <InputNumber class="form-control" @bind-Value="Detalle.Costo"></InputNumber>
-
-                    </div>
-
 
                     @* Cantidad *@
-                    <div class="col">
+                    <div class="col - 6">
                         <label>Cantidad</label>
-                        <InputNumber class="form-control" @bind-Value="Detalle.Precio" />
+                        <InputNumber class="form-control" @bind-Value="Detalle.Cantidad" />
 
                     </div>
 
@@ -94,7 +96,8 @@
                         <th>Descripción</th>
                         <th>Costo</th>
                         <th>Precio</th>
-                        <th>Existencia</th>
+                        <th>Cantidad</th>
+                        <th>Importe</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,7 +108,8 @@
                             <td>@item.Descripcion </td>
                             <td>@item.Costo</td>
                             <td>@item.Precio</td>
-                            <td>RD$@item.Existencia</td>
+                            <td>@item.Cantidad</td>
+                            <td>@item.Importe</td>
                         </tr>
                     }
                 </tbody>
@@ -142,6 +146,7 @@
     public int CompraId { get; set; }
     public Compras compra { get; set; } = new Compras();
     public List<Productos> ProductList { get; set; }
+    public Productos productos { get; set; } = new Productos();
     public ComprasDetalles Detalle { get; set; } = new ComprasDetalles();
 
     protected override void OnInitialized()
@@ -150,7 +155,8 @@
 
         ProductList = productosBLL.GetList();
         compra.CompraId = 0;
-        compra.SuplidorId = "Jeison Reyes";
+        compra.SuplidorId = "";
+        compra.Ncf = "";
         compra.Fecha = DateTime.Now;
         compra.Total = 0;
         compra.CompraId = CompraId;
@@ -164,10 +170,11 @@
         {
 
             Detalle.Descripcion = producto.Descripcion;
-
             Detalle.Costo = producto.Costo;
-
+            Detalle.Precio = producto.Precio;
             compra.Detalle.Add(Detalle);
+            compra.Total = compra.Detalle.Sum(det => det.Importe);
+            Detalle = new ComprasDetalles();
 
         }
 
@@ -175,8 +182,12 @@
 
     public void Nuevo()
     {
-        compra = new Compras();
+        if (compra.Total > 0)
+        {
+            compra = new Compras();
+            Detalle = new ComprasDetalles();
 
+        }
     }
     void Buscar()
     {
@@ -193,10 +204,11 @@
 
     void Guardar()
     {
-        this.compra.Ncf = "";
-        var guardado = comprasBLL.Guardar(this.compra);
-
-        Console.WriteLine("No se Guardo");
+        if (compra.Total > 0)
+        {
+            var guardado = comprasBLL.Guardar(this.compra);
+           Nuevo();
+        }
 
 
     }
@@ -204,19 +216,16 @@
     public void Eliminar()
     {
         bool eliminado;
-        if (compra.Total != 0)
+        if (compra.Total > 0)
         {
-            eliminado = comprasBLL.Eliminar(compra.CompraId);
+            eliminado = comprasBLL.Eliminar(compra);
             if (eliminado)
             {
                 Nuevo();
+            }
 
-            }
-            else
-            {
-                Console.WriteLine("No se elimino la compra");
-            }
         }
+
     }
 
 

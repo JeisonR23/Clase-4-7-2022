@@ -10,16 +10,20 @@ public class ComprasDetalles
 
         public int ProductoId { get; set; }
 
-        
         [NotMapped]
         public string Descripcion { get; set; }
 
         public double Costo { get; set; }
         public double Precio { get; set; }
-        public double Existencia { get; set; }
+        public double Cantidad { get; set; }
+
+         [NotMapped]
+        public double Importe { 
+            get { return Cantidad * Costo; }
+        }
         
         public override string? ToString()
         {
-            return $"Detalle # {DetalleId}, ProductoId= {ProductoId} , Costo = {Costo}, Precio={Precio},  Existencia ={Existencia} ";
+            return $"Detalle # {DetalleId}, ProductoId= {ProductoId} , Costo = {Costo}, Precio={Precio},  Cantidad ={Cantidad} ";
         }
     }

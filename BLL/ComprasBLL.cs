@@ -33,11 +33,12 @@ public class ComprasBLL
         {
             var producto = _contexto.Productos.Find(item.ProductoId);
 
-            producto.Existencia += item.Existencia;
+            producto.Existencia += item.Cantidad;
 
         }
 
         var insertados = _contexto.SaveChanges();
+        _contexto.Entry(compra).State = EntityState.Detached;
         return insertados > 0;
     }
 
@@ -61,15 +62,23 @@ public class ComprasBLL
         return fechas;
     }
 
-    public bool Eliminar(int idCompra)
+     public bool Eliminar(Compras compras)
     {
-        bool elimina = false;
-        var eliminado = _contexto.Compras.Find(idCompra);
-        _contexto.Entry(eliminado).State = EntityState.Deleted;
-        elimina = (_contexto.SaveChanges() > 0);
-        return elimina;
-    }
+        _contexto.Entry(compras).State = EntityState.Deleted;
 
+        foreach (var item in compras.Detalle )
+        {
+            var productos = _contexto.Productos.Find(item.ProductoId);
+            productos.Existencia -= item.Cantidad;
+        }
+
+        _contexto.Database.ExecuteSqlRaw($"DELETE FROM ComprasDetalles WHERE CompraId={compras.CompraId};");
+
+        bool paso = _contexto.SaveChanges() > 0;
+        _contexto.Entry(compras).State = EntityState.Detached;
+
+        return paso;
+    }
 
     public Compras BuscarP(int idCompras)
     {
@@ -80,6 +89,11 @@ public class ComprasBLL
             .SingleOrDefault();
 
         return compra;
+    }
+
+      public List<Compras> GetList()
+    {
+        return _contexto.Compras.AsNoTracking().ToList();
     }
 }
 

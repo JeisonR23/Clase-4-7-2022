@@ -1,5 +1,6 @@
 @page "/C_Productos"
 @inject ComprasBLL comprasBLL
+@inject ProductosBLL productosBLL
 
 <EditForm Model="compra">
 
@@ -8,24 +9,20 @@
         <div class="card-header">
             <h4 style="text-align: center;">Consulta de Productos</h4>
         </div>
-
-        <div class="card-body">
-            <div class="input-group mb-4">
-            <input type="date" @bind="fecha">
-            <input type="date" @bind="fecha2">
-            <button @onclick="Buscar" class="btn btn-primary"> <i class="oi oi-magnifying-glass"></i></button>
-            </div>
-
+        <div class="col-3">
+            <button @onclick="Buscar" class="btn btn-outline-primary" type="button"> <i
+                    class="oi oi-magnifying-glass" /> </button>
         </div>
     </div>
 
     <table class="table table-light" style="box-shadow: 1px 6px rgba(0, 0, 0, 0.2);">
         <thead class="thead">
             <tr class="table">
-                <th>CompraId</th>
-                <th>Fecha</th>
-                <th>Suplidor</th>
+                <th>ProductoId</th>
+                <th>Descripcion</th>
                 <th>Costo</th>
+                <th>Precio</th>
+                <th>Existencia</th>
             </tr>
         </thead>
         <tbody>
@@ -40,39 +37,17 @@
                 }
 
                 <tr>
-                    <td>@compra.CompraId</td>
-                    <td>@compra.Fecha.ToString("dd/MM/yyyy")</td>
-                    <td>@compra.SuplidorId</td>
-                    <td>@compra.Total </td>
+                    <td>@compra.ProductoId</td>
+                    <td>@compra.Descripcion</td>
+                    <td>@compra.Costo</td>
+                    <td>@compra.Precio</td>
+                    <td>@compra.Existencia</td>
                 </tr>
-
-                TotalCompras += compra.Total;
-                TotalRegistro = compra.CompraId;
             }
 
         </tbody>
 
     </table>
-
-    <div class="row justify-content-between">
-        <div class="col-4">
-            <label>Total Registros</label>
-            <div class="input-group mb-3">
-                <span class="form-control">@TotalRegistro</span>
-            </div>
-        </div>
-
-        <div class="col-4">
-            <label>Total Compras</label>
-            <div class="input-group mb-3">
-                <span class="form-control">@TotalCompras</span>
-            </div>
-        </div>
-    </div>
-
-
-
-
 
 </EditForm>
 
@@ -80,32 +55,22 @@
 
 
     public Compras compra { get; set; } = new Compras();
-    public DateTime fecha { get; set; } = new DateTime();
-    public DateTime fecha2 { get; set; } = new DateTime();
     public double TotalCompras { get; set; } = 0;
-    public List<Compras> comprasList { get; set; } = new List<Compras>();
+    public List<Productos> comprasList { get; set; } = new List<Productos>();
     public int TotalRegistro { get; set; } = 0;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        fecha = DateTime.Now;
-        fecha2 = DateTime.Now;
+
     }
 
 
     void Buscar()
     {
-        if (fecha != null || fecha2 != null)
-        {
 
-            comprasList = comprasBLL.Buscar(fecha, fecha2);
 
-        }
-        else
-        {
-            Console.WriteLine("No se encontro esta fecha");
-        }
+        comprasList = productosBLL.GetList();
 
 
     }

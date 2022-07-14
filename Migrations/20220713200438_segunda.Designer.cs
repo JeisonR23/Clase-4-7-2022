@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroDetalles.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220704224625_agregando productos iniciales")]
-    partial class agregandoproductosiniciales
+    [Migration("20220713200438_segunda")]
+    partial class segunda
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,13 +49,13 @@ namespace RegistroDetalles.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Cantidad")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("CompraId")
                         .HasColumnType("INTEGER");
 
                     b.Property<double>("Costo")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Existencia")
                         .HasColumnType("REAL");
 
                     b.Property<double>("Precio")
@@ -126,19 +126,7 @@ namespace RegistroDetalles.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

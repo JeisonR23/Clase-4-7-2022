@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RegistroDetalles.Migrations
 {
-    public partial class inicial : Migration
+    public partial class Inicial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -65,8 +65,9 @@ namespace RegistroDetalles.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     CompraId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Cantidad = table.Column<double>(type: "REAL", nullable: false),
-                    Costo = table.Column<double>(type: "REAL", nullable: false)
+                    Costo = table.Column<double>(type: "REAL", nullable: false),
+                    Precio = table.Column<double>(type: "REAL", nullable: false),
+                    Cantidad = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,6 +79,21 @@ namespace RegistroDetalles.Migrations
                         principalColumn: "CompraId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Productos",
+                columns: new[] { "ProductoId", "Costo", "Descripcion", "Existencia", "Precio" },
+                values: new object[] { 1, 3.0, "Huevos", 0.0, 7.0 });
+
+            migrationBuilder.InsertData(
+                table: "Productos",
+                columns: new[] { "ProductoId", "Costo", "Descripcion", "Existencia", "Precio" },
+                values: new object[] { 2, 50.0, "Cebollas", 0.0, 85.0 });
+
+            migrationBuilder.InsertData(
+                table: "Productos",
+                columns: new[] { "ProductoId", "Costo", "Descripcion", "Existencia", "Precio" },
+                values: new object[] { 3, 30.0, "Lechuga", 0.0, 50.0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComprasDetalles_CompraId",
