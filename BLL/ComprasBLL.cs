@@ -80,7 +80,7 @@ public class ComprasBLL
         return paso;
     }
 
-    public Compras BuscarP(int idCompras)
+    public Compras BuscarP(int? idCompras)
     {
         var compra = _contexto.Compras
         .Include(x => x.Detalle)
@@ -91,6 +91,16 @@ public class ComprasBLL
         return compra;
     }
 
+      public List<Compras> BuscarC(int? idCompras)
+    {
+            var buscado = _contexto.Compras
+            .Where(p => p.CompraId == idCompras)
+            .AsNoTracking()
+            .ToList();
+        return  buscado;
+    }
+
+    
       public List<Compras> GetList()
     {
         return _contexto.Compras.AsNoTracking().ToList();

@@ -2,16 +2,21 @@
 @inject ComprasBLL comprasBLL
 @inject ProductosBLL productosBLL
 
-<EditForm Model="compra">
+<EditForm Model="productos">
 
     <div class="card">
 
         <div class="card-header">
-            <h4 style="text-align: center;">Consulta de Productos</h4>
+            <h4 class=" text-center">Consulta de Productos</h4>
         </div>
+
+        @*Producto Id*@
         <div class="col-3">
-            <button @onclick="Buscar" class="btn btn-outline-primary" type="button"> <i
-                    class="oi oi-magnifying-glass" /> </button>
+            <div class="input-group mb-3">
+                <InputNumber class="form-control" @bind-Value="productos.ProductoId" />
+                <button @onclick="Buscar" class="btn btn-outline-primary" type="button"> <i
+                        class="oi oi-magnifying-glass" /> </button>
+            </div>
         </div>
     </div>
 
@@ -27,10 +32,10 @@
         </thead>
         <tbody>
 
-            @foreach (var compra in comprasList)
+            @foreach (var compra in producList)
             {
 
-                if (compra == comprasList.ElementAt(0))
+                if (compra == producList.ElementAt(0))
                 {
                     TotalCompras = 0;
                     TotalRegistro = 0;
@@ -54,9 +59,9 @@
 @code {
 
 
-    public Compras compra { get; set; } = new Compras();
+    public Productos productos { get; set; } = new Productos();
     public double TotalCompras { get; set; } = 0;
-    public List<Productos> comprasList { get; set; } = new List<Productos>();
+    public List<Productos>  producList { get; set; } = new List<Productos>();
     public int TotalRegistro { get; set; } = 0;
 
     protected override void OnInitialized()
@@ -69,9 +74,13 @@
     void Buscar()
     {
 
-
-        comprasList = productosBLL.GetList();
-
-
+        if (productos.ProductoId == 0 || productos.ProductoId == null )
+        {
+            producList = productosBLL.GetList();
+        }
+        else
+        {
+           producList = productosBLL.BuscarP(productos.ProductoId);
+        }
     }
 }

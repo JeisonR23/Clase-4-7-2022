@@ -1,0 +1,203 @@
+@page "/R_Productos"
+@page "/R_Productos/{ProductoId:int}"
+@inject ComprasBLL comprasBLL
+@inject ProductosBLL productosBLL
+
+<EditForm Model="productos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card text-dark bg-light mb-5 shadow-lg">
+
+        <div class="card-header">
+            <h4 class=" text-center">Registro de Producto</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row justify-content-between">
+
+                @*Producto Id*@
+                <div class="col-3">
+                    <label>Producto Id</label>
+                    <div class="input-group mb-1">
+                        <InputNumber class="form-control" @bind-Value="productos.ProductoId" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button"> <i
+                                class="oi oi-magnifying-glass" /> </button>
+                    </div>
+                </div>
+                @*Descripcion*@
+                <div class="col-12">
+                    <label>Descripcion </label>
+                    <div class="input-group mb-1">
+                        <InputText class="form-control " @bind-Value="productos.Descripcion" placeholder="Descripcion" />
+                    </div>
+                         <ValidationMessage For="@(() => productos.Descripcion)" class="form-control" />
+                </div>
+
+                @*Costo Producto*@
+                <div class="col-12">
+                    <label>Costo </label>
+                    <div class="input-group mb-1">
+                        <InputNumber class="form-control" @bind-Value="productos.Costo" placeholder="Costo Producto" />
+                    </div>
+                        <ValidationMessage For="@(() => productos.Costo)"  />
+                </div>
+
+                @*Precio Producto*@
+                <div class="col-12">
+                    <label>Precio</label>
+                    <div class="input-group mb-1">
+                        <InputNumber class="form-control" @bind-Value="productos.Precio"
+                            placeholder="Precio Producto" />
+                    </div>
+                              <ValidationMessage For="@(() => productos.Precio)" />
+                </div>
+
+                @*Producto Existencia*@
+                <div class="col-12">
+                    <label>Existencia</label>
+                    <div class="input-group mb-1" >
+                        <InputNumber class="form-control" @bind-Value="productos.Existencia" placeholder="Existencia" />
+                    </div>
+                </div>
+            </div>
+
+
+
+            @* Tabla de detalles
+                <hr />
+                <table class="table table-bordered table-light">
+                <thead class="thead">
+                <tr class="table">
+                <th>ProductoId</th>
+                <th>Descripción</th>
+                <th>Costo</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Importe</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in compra.Detalle)
+                {
+                <tr>
+                <td>@item.ProductoId</td>
+                <td>@item.Descripcion </td>
+                <td>@item.Costo</td>
+                <td>@item.Precio</td>
+                <td>@item.Cantidad</td>
+                <td>@item.Importe</td>
+                </tr>
+                }
+                </tbody>
+                </table>
+                <hr />*@
+        </div>
+
+        <div class="card-footer d-flex justify-content-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file"> Nuevo
+                    </i></button>
+                <button type="submit" class="btn btn-success"> <i class="oi oi-document"> Guardar </i></button>
+                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"> Eliminar
+                    </i></button>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int ProductoId { get; set; }
+    public List<Productos> ProductList { get; set; }
+    public Productos productos { get; set; } = new Productos();
+    public ComprasDetalles Detalle { get; set; } = new ComprasDetalles();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        ProductList = productosBLL.GetList();
+        productos.ProductoId = 0;
+        productos.Descripcion = "";
+        productos.Costo = 0;
+        productos.Precio = 0;
+        productos.Existencia = 0;
+        Buscar();
+    }
+
+    /* public void AgregarDetalle()
+    {
+    var producto = productosBLL.Buscar(Detalle.ProductoId);
+    if (producto != null)
+    {
+
+    Detalle.Descripcion = producto.Descripcion;
+    Detalle.Costo = producto.Costo;
+    Detalle.Precio = producto.Precio;
+    compra.Detalle.Add(Detalle);
+    compra.Total = compra.Detalle.Sum(det => det.Importe);
+    Detalle = new ComprasDetalles();
+
+    }
+
+    }*/
+
+    public void Nuevo()
+    {
+        if (productos.ProductoId > 0)
+        {
+            productos = new Productos();
+            Detalle = new ComprasDetalles();
+
+        }
+    }
+
+    void Buscar()
+    {
+        if (this.productos.ProductoId > 0)
+        {
+            Productos encontrado = productosBLL.BuscarId(productos.ProductoId);
+            if (encontrado != null)
+            {
+                this.productos = encontrado;
+            }
+
+        }
+    }
+
+    public void Guardar()
+    {
+        if (productos.Descripcion != "" && productos.Costo > 0 && productos.Precio > 0)
+        {
+            var guardado = productosBLL.Guardar(this.productos);
+            if (guardado != null)
+            {
+                Nuevo();
+
+            }
+        }
+        else
+        {
+            Console.WriteLine("Favor llenar los campos");
+        }
+    }
+
+    public void Eliminar()
+    {
+        bool eliminado;
+        if (productos.ProductoId > 0)
+        {
+            eliminado = productosBLL.Eliminar(productos);
+            if (eliminado)
+            {
+                Nuevo();
+            }
+
+        }
+
+    }
+
+
+}

@@ -15,6 +15,8 @@ public class ComprasDetalles
 
         public double Costo { get; set; }
         public double Precio { get; set; }
+
+        [Required(ErrorMessage = "Ingrese una cantidad")]
         public double Cantidad { get; set; }
 
          [NotMapped]

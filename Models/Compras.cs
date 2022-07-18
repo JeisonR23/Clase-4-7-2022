@@ -5,16 +5,25 @@ public class Compras
 {
     [Key]
     public int CompraId { get; set; }
+
     public DateTime Fecha { get; set; } = DateTime.Now;
-    public string SuplidorId {get;set;} 
-    public string Ncf{ get; set; }
-    public double Total{ get; set; }
+
+    [Required(ErrorMessage = "Ingrese el nombre del suplidor")]
+    public string SuplidorId { get; set; }
+
+   [Required(ErrorMessage = "Ingrese el el NCF")]
+    public string Ncf { get; set; }
+
+
+    public double Total { get; set; }
 
     [ForeignKey("CompraId")]
     public List<ComprasDetalles> Detalle { get; set; } = new List<ComprasDetalles>();
 
-    public double TotalCompras { get {return Total + Total;}
-     }
+    public double TotalCompras
+    {
+        get { return Total + Total; }
+    }
 
     public override string? ToString()
     {

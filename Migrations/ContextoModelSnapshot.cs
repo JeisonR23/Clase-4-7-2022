@@ -79,6 +79,7 @@ namespace RegistroDetalles.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Existencia")

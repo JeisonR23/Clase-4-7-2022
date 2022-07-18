@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroDetalles.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220713200412_Inicial")]
-    partial class Inicial
+    [Migration("20220718151023_Modificando modes")]
+    partial class Modificandomodes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,6 +81,7 @@ namespace RegistroDetalles.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Existencia")
@@ -126,19 +127,7 @@ namespace RegistroDetalles.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
